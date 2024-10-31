@@ -1,0 +1,25 @@
+{
+  "name": "jvb-spotify-client",
+  "version": "0.0.1",
+  "description": "like totally use this to make spotify data babes",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "prebuild": "rm -rf ./dist/*",
+    "build": "npm run esbuild -- ./src/index.ts --bundle --platform=node --outdir=dist",
+    "postbuild": "tsc",
+    "esbuild": "esbuild"
+  },
+  "keywords": [],
+  "author": "the girl reading this",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "esbuild": "^0.24.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5"
+  }
+}
