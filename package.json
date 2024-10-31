@@ -1,7 +1,7 @@
 {
   "name": "jvb-spotify-client",
   "version": "0.0.1",
-  "description": "like totally use this to make spotify data babes",
+  "description": "like totally use this to make spotify api requests babes",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
