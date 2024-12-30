@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "prebuild": "rm -rf ./dist/*",
-    "build": "npm run esbuild -- ./src/index.ts --bundle --platform=node --outdir=dist",
+    "build": "npm run esbuild -- ./src/index.ts --bundle --platform=neutral --outdir=dist",
     "postbuild": "tsc",
     "esbuild": "esbuild"
   },
