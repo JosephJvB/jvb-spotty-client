@@ -4,6 +4,7 @@ import { SpotifyTrack } from './tracks'
 export type SpotifyPlaylist = {
   id: string
   href: string
+  public: boolean
   collaborative: boolean
   description: string
   followers: {

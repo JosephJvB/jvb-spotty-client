@@ -60,28 +60,33 @@ export const getTracksByIds = async ({
   basicToken: string
   trackIds: string[]
 }) => {
-  const queryParams = new URLSearchParams({
-    ids: trackIds.join(','),
-  })
+  const foundTracks: SpotifyTrack[] = []
 
-  const response = await fetch(
-    `https://api.spotify.com/v1/tracks?${queryParams}`,
-    {
-      method: 'get',
-      headers: {
-        Authorization: `Bearer ${basicToken}`,
-      },
+  for (let i = 0; i < trackIds.length; i += 50) {
+    const queryParams = new URLSearchParams({
+      ids: trackIds.slice(i, i + 50).join(','),
+    })
+
+    const response = await fetch(
+      `https://api.spotify.com/v1/tracks?${queryParams}`,
+      {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${basicToken}`,
+        },
+      }
+    )
+
+    if (!response.ok) {
+      const text = await response.text()
+      throw new Error('getTracksByIds failed\n' + text)
     }
-  )
 
-  if (!response.ok) {
-    const text = await response.text()
-    throw new Error('getTracksByIds failed\n' + text)
+    const json: { tracks: SpotifyTrack[] } = await response.json()
+    foundTracks.push(...json.tracks)
   }
 
-  const data: { tracks: SpotifyTrack[] } = await response.json()
-
-  return data.tracks
+  return foundTracks
 }
 
 export const removeLikedTracks = async ({
@@ -109,32 +114,36 @@ export const removeLikedTracks = async ({
   }
 }
 
-export const getLikedTracks = async ({
+export const getAllLikedTracks = async ({
   accessToken,
-  nextUrl,
 }: {
   accessToken: string
-  nextUrl?: string
 }) => {
   const tracks: SpotifyPlaylistTrack[] = []
-  const url = nextUrl ?? `https://api.spotify.com/v1/me/tracks`
-  const response = await fetch(url, {
-    headers: {
-      Authorization: 'Bearer ' + accessToken,
-    },
-  })
+  let nextUrl: URL | undefined = new URL('https://api.spotify.com/v1/me/tracks')
 
-  if (!response.ok) {
-    const text = await response.text()
-    throw new Error('failed to get liked tracks\n' + text)
+  while (nextUrl) {
+    nextUrl.searchParams.set('limit', '50')
+
+    const response = await fetch(nextUrl, {
+      headers: {
+        Authorization: 'Bearer ' + accessToken,
+      },
+    })
+
+    if (!response.ok) {
+      const text = await response.text()
+      throw new Error('failed to get liked tracks\n' + text)
+    }
+
+    const json: SpotifyPaginatedResponse<SpotifyPlaylistTrack> =
+      await response.json()
+
+    tracks.push(...json.items)
+    nextUrl = !!json.next ? new URL(json.next) : undefined
   }
 
-  const { items, next }: SpotifyPaginatedResponse<SpotifyPlaylistTrack> =
-    await response.json()
-
-  tracks.push(...items)
-
-  return { tracks, next }
+  return tracks
 }
 
 /**

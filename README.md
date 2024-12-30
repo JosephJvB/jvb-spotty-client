@@ -9,6 +9,9 @@ I've written this junk [a few times over](https://github.com/JosephJvB?tab=repos
 and I'm keen to learn about how to do npm packages again and maybe better
 
 TODO:
+- ci/cd
+  - push to main creates new version
+    - have to handle new version number
 - tests
   - tests that check looping / chunking
   - tests that methods are creating expected fetch requests
